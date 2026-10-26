@@ -1,0 +1,14 @@
+networks:
+  testParc_net:
+    name: testParc_network
+
+
+
+services:
+  pc:
+    image: alpine:3.24
+    container_name: container-pc
+    init: true
+    command: sleep infinity
+    networks:
+      - testParc_net

@@ -12,3 +12,11 @@ services:
     command: sleep infinity
     networks:
       - testParc_net
+
+  web:
+    image: nginx:alpine
+    container_name: container-web
+    init: true
+    command: ["sh", "-c", "nginx && exec sleep infinity"]
+    networks:
+      - testParc_net

@@ -20,3 +20,10 @@ services:
     command: ["sh", "-c", "nginx && exec sleep infinity"]
     networks:
       - testParc_net
+  imprimante:
+    image: alpine/socat
+    container_name: container-imprimante
+    init: true
+    entrypoint: ["sh", "-c", "socat TCP-LISTEN:9100,reuseaddr EXEC:/bin/cat & exec sleep infinity"]
+    networks:
+      - testParc_net

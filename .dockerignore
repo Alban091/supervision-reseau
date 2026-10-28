@@ -1,0 +1,10 @@
+.git
+.venv
+venv
+.idea
+.env
+staticfiles
+media
+**/__pycache__
+**/*.pyc
+**/.DS_Store

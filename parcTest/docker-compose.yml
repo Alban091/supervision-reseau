@@ -1,36 +1,44 @@
 networks:
   testParc_net:
     name: testParc_network
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+          ip_range: 10.10.0.128/25 #adresses disponibles pour les conteneurs (.128 à .254)
 
 
 
 services:
-  pc:
+  pc-01:
     image: alpine:3.24
-    container_name: container-pc
+    container_name: pc-01
     init: true
     command: sleep infinity
     networks:
-      - testParc_net
+      testParc_net:
+        ipv4_address: 10.10.0.12
 
-  web:
+  srv-web:
     image: nginx:alpine
-    container_name: container-web
+    container_name: srv-web
     init: true
     command: ["sh", "-c", "nginx && exec sleep infinity"]
     networks:
-      - testParc_net
-  imprimante:
+      testParc_net:
+        ipv4_address: 10.10.0.10
+  printer-01:
     image: alpine/socat
-    container_name: container-imprimante
+    container_name: printer-01
     init: true
     entrypoint: ["sh", "-c", "socat TCP-LISTEN:9100,fork,reuseaddr EXEC:/bin/cat & exec sleep infinity"]
     networks:
-      - testParc_net
+      testParc_net:
+        ipv4_address: 10.10.0.13
 
-  ssh:
+  srv-ssh:
     build: ./ssh
-    container_name: container-ssh
+    container_name: srv-ssh
     init: true
     networks:
-      - testParc_net
+      testParc_net:
+        ipv4_address: 10.10.0.11

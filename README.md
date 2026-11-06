@@ -40,11 +40,43 @@ docker compose exec web python manage.py test
 
 - [x] Projet Django et Docker (PostgreSQL, Gunicorn, Nginx)
 - [ ] Parc de test Docker
-- [ ] Modèles et administration
+- [x] Modèles et administration
 - [ ] Supervision ping et TCP
 - [ ] Tableau de bord en temps réel
 - [ ] Équipements qui parlent (lot 1)
 
 ## Modèle de données
 
-À venir.
+Trois modèles, dans `monitoring/models.py` :
+
+- **Device** : un équipement du parc (serveur, PC ou imprimante), avec son nom et son adresse IP. Son état et ses dates de contrôle sont mis à jour par la boucle de supervision.
+- **Port** : un port TCP à tester sur un équipement, par exemple 80 pour un serveur web, 22 pour SSH ou 9100 pour une imprimante.
+- **StatusChange** : l'historique, avec une ligne à chaque changement d'état d'un équipement.
+
+```mermaid
+erDiagram
+    Device ||--o{ Port : "a des ports"
+    Device ||--o{ StatusChange : "a un historique"
+    Device {
+        string name "unique"
+        string kind "serveur, PC, imprimante"
+        string ip_address "unique"
+        string status "inconnu, en ligne, hors ligne"
+        int consecutive_failures
+        datetime last_checked_at
+        datetime last_seen_at
+    }
+    Port {
+        int device_id FK
+        int number "1 à 65535, unique par équipement"
+        string label "HTTP, SSH..."
+        bool is_open "vide = pas encore testé"
+        datetime last_checked_at
+    }
+    StatusChange {
+        int device_id FK
+        string old_status
+        string new_status
+        datetime changed_at
+    }
+```

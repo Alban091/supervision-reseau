@@ -39,7 +39,7 @@ docker compose exec web python manage.py test
 ## Roadmap
 
 - [x] Projet Django et Docker (PostgreSQL, Gunicorn, Nginx)
-- [ ] Parc de test Docker
+- [x] Parc de test Docker
 - [ ] Modèles et administration
 - [ ] Supervision ping et TCP
 - [ ] Tableau de bord en temps réel

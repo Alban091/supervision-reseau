@@ -2,10 +2,13 @@ from django.db import DatabaseError, connection
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from .models import Device
+
 
 def home(request):
-    """Display the initial web page."""
-    return render(request, "index.html")
+    """Display the devices of the park and their state."""
+    devices = Device.objects.all()
+    return render(request, "index.html", {"devices": devices})
 
 
 def health(request):

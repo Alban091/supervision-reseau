@@ -11,6 +11,7 @@
             <th>Adresse IP</th>
             <th>État</th>
             <th>Dernier contrôle</th>
+            <th>Ports</th>
         </tr>
     </thead>
      <tbody>
@@ -21,10 +22,15 @@
             <td>{{ device.ip_address }}</td>
             <td>{{ device.get_status_display }}</td>
             <td>{{ device.last_check|default:"Jamais" }}</td>
+                        <td>
+                {% for port in device.ports.all %}
+                    {{ port.number }}
+                {% endfor %}
+            </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">Aucun équipement dans l'inventaire.</td>
+            <td colspan="6">Aucun équipement dans l'inventaire.</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -7,7 +7,7 @@ from .models import Device
 
 def home(request):
     """Display the devices of the park and their state."""
-    devices = Device.objects.all()
+    devices = Device.objects.prefetch_related("ports")
     return render(request, "index.html", {"devices": devices})
 
 

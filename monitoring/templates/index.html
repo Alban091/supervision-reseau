@@ -20,7 +20,15 @@
             <td>{{ device.name }}</td>
             <td>{{ device.get_kind_display }}</td>
             <td>{{ device.ip_address }}</td>
-            <td>{{ device.get_status_display }}</td>
+            <td>
+                {% if device.status == "online" %}
+                    <span class="badge bg-success">{{ device.get_status_display }}</span>
+                {% elif device.status == "offline" %}
+                    <span class="badge bg-danger">{{ device.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ device.get_status_display }}</span>
+                {% endif %}
+            </td>
             <td>{{ device.last_check|default:"Jamais" }}</td>
                         <td>
                 {% for port in device.ports.all %}

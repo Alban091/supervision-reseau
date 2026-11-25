@@ -73,3 +73,28 @@ class AdminPagesTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "srv-web")
+
+
+class HomeViewTests(TestCase):
+    def test_home_page_loads(self):
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "index.html")
+
+    def test_home_page_lists_devices(self):
+        Device.objects.create(name="srv-web", kind=Device.Kind.SERVER, ip_address="10.10.0.10")
+
+        response = self.client.get("/")
+
+        self.assertContains(response, "srv-web")
+
+    def test_home_page_query_count(self):
+        for i in range(3):
+            device = Device.objects.create(
+                name=f"device-{i}", kind=Device.Kind.SERVER, ip_address=f"10.10.0.{i + 1}"
+            )
+            Port.objects.create(device=device, number=80)
+
+        with self.assertNumQueries(2):
+            self.client.get("/")

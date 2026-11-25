@@ -3,5 +3,7 @@
 {% block content %}
 <h1>Supervision d'un parc informatique</h1>
 
-{% include "devices_table.html" %}
+<div hx-get="{% url 'devices_table' %}" hx-trigger="every 2s">
+    {% include "devices_table.html" %}
+</div>
 {% endblock %}

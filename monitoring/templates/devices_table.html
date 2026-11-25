@@ -9,7 +9,7 @@
             <th>Ports</th>
         </tr>
     </thead>
-     <tbody>
+    <tbody>
         {% for device in devices %}
         <tr>
             <td>{{ device.name }}</td>
@@ -24,8 +24,8 @@
                     <span class="badge bg-secondary">{{ device.get_status_display }}</span>
                 {% endif %}
             </td>
-            <td>{{ device.last_check|default:"Jamais" }}</td>
-                        <td>
+            <td>{{ device.last_checked_at|default:"Jamais" }}</td>
+                    <td>
                 {% for port in device.ports.all %}
                     {{ port.number }}
                 {% endfor %}

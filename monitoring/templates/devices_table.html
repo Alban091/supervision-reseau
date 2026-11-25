@@ -1,0 +1,40 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Adresse IP</th>
+            <th>État</th>
+            <th>Dernier contrôle</th>
+            <th>Ports</th>
+        </tr>
+    </thead>
+     <tbody>
+        {% for device in devices %}
+        <tr>
+            <td>{{ device.name }}</td>
+            <td>{{ device.get_kind_display }}</td>
+            <td>{{ device.ip_address }}</td>
+            <td>
+                {% if device.status == "online" %}
+                    <span class="badge bg-success">{{ device.get_status_display }}</span>
+                {% elif device.status == "offline" %}
+                    <span class="badge bg-danger">{{ device.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ device.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td>{{ device.last_check|default:"Jamais" }}</td>
+                        <td>
+                {% for port in device.ports.all %}
+                    {{ port.number }}
+                {% endfor %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Aucun équipement dans l'inventaire.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

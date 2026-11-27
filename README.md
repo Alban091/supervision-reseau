@@ -26,9 +26,26 @@ Pour tout arrêter : `docker compose down`.
 
 - `db` : base PostgreSQL 16
 - `web` : application Django servie par Gunicorn
+- `supervisor` : boucle de supervision, qui teste tous les équipements toutes les 3 s (ping et ports TCP) et enregistre leur état
 - `nginx` : reverse proxy sur le port 8080, qui sert aussi les fichiers statiques et les médias
 
 Au démarrage, le conteneur `web` applique les migrations, copie les fichiers statiques et crée le compte admin s'il n'existe pas.
+
+Le parc de test, défini dans `parcTest/docker-compose.yml`, démarre avec le reste sur le réseau `10.10.0.0/24` :
+
+| Équipement | Adresse IP | Service |
+|---|---|---|
+| srv-web | 10.10.0.10 | HTTP (80) |
+| srv-ssh | 10.10.0.11 | SSH (22) |
+| pc-01 | 10.10.0.12 | aucun |
+| printer-01 | 10.10.0.13 | impression (9100) |
+
+Un équipement passe hors ligne après 2 pings ratés de suite. Pour simuler une panne :
+
+```bash
+docker stop pc-01
+docker start pc-01
+```
 
 ## Tests
 
@@ -41,7 +58,7 @@ docker compose exec web python manage.py test
 - [x] Projet Django et Docker (PostgreSQL, Gunicorn, Nginx)
 - [x] Parc de test Docker
 - [x] Modèles et administration
-- [ ] Supervision ping et TCP
+- [x] Supervision ping et TCP
 - [ ] Tableau de bord en temps réel
 - [ ] Équipements qui parlent (lot 1)
 

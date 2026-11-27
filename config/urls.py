@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from monitoring.views import devices_table, health, home
@@ -25,4 +26,5 @@ urlpatterns = [
     path("", home, name="home"),
     path("health/", health, name="health"),
     path("devices_table/", devices_table, name="devices_table"),
+    path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
 ]

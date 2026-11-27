@@ -1,3 +1,18 @@
+# The test park (srv-web, srv-ssh, pc-01, printer-01) starts with the application.
+include:
+  - parcTest/docker-compose.yml
+
+# Settings shared by the web application and the supervision loop.
+x-django-env: &django-env
+  DJANGO_SECRET_KEY: dev-secret-key-change-me
+  DJANGO_DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+  DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+  POSTGRES_HOST: db
+  POSTGRES_DB: supervision
+  POSTGRES_USER: supervision
+  POSTGRES_PASSWORD: supervision
+
 services:
   db:
     image: postgres:16
@@ -17,15 +32,7 @@ services:
   web:
     build: .
     restart: unless-stopped
-    environment:
-      DJANGO_SECRET_KEY: dev-secret-key-change-me
-      DJANGO_DEBUG: "0"
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
-      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
-      POSTGRES_HOST: db
-      POSTGRES_DB: supervision
-      POSTGRES_USER: supervision
-      POSTGRES_PASSWORD: supervision
+    environment: *django-env
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
@@ -38,6 +45,21 @@ services:
       timeout: 3s
       retries: 5
       start_period: 20s
+
+  supervisor:
+    build: .
+    restart: unless-stopped
+    environment: *django-env
+    # The web container already runs the migrations, so this one only starts the loop.
+    entrypoint: []
+    command: ["python", "manage.py", "supervise"]
+    # On the default network to reach the database, and on the park network to reach the devices.
+    networks:
+      - default
+      - testParc_net
+    depends_on:
+      web:
+        condition: service_healthy
 
   nginx:
     image: nginx:1.27-alpine

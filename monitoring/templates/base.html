@@ -33,6 +33,13 @@
 </head>
 <body>
     <div class="container">
+        
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="text-end">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Se déconnecter</button>
+        </form>
+        {% endif %}
         {% block content %}
 
         {% endblock %}

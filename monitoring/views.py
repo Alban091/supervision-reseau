@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError, connection
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -5,6 +6,7 @@ from django.shortcuts import render
 from .models import Device
 
 
+@login_required
 def home(request):
     """Display the devices of the park and their state."""
     devices = Device.objects.prefetch_related("ports")
@@ -20,6 +22,7 @@ def health(request):
     return JsonResponse({"status": "ok"})
 
 
+@login_required
 def devices_table(request):
     """Return only the devices table, reloaded by HTMX every 2 seconds."""
     devices = Device.objects.prefetch_related("ports")

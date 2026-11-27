@@ -76,6 +76,10 @@ class AdminPagesTests(TestCase):
 
 
 class HomeViewTests(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(username="zak", password="test")
+        self.client.force_login(user)
+
     def test_home_page_loads(self):
         response = self.client.get("/")
 
@@ -96,5 +100,13 @@ class HomeViewTests(TestCase):
             )
             Port.objects.create(device=device, number=80)
 
-        with self.assertNumQueries(2):
+        # 2 queries for the session and the user, 2 for the devices and their ports.
+        with self.assertNumQueries(4):
             self.client.get("/")
+
+
+class AccessControlTests(TestCase):
+    def test_anonymous_user_redirected(self):
+        response = self.client.get("/")
+
+        self.assertRedirects(response, "/login/?next=/")
